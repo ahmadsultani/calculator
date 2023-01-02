@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins';
+}
+
+body {
+  background-color: #888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 360px;
+  height: 640px;
+  margin: 0 auto;
+  color: #353535;
+  background-color: #f3f3f3;
+  display: flex;
+  flex-direction: column;
+}
+
+.mode {
+  width: 70px;
+  height: 31px;
+  margin: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px;
+  background-color: #3C6E71;
+  border-radius: 70px;
+}
+
+.btn-mode {
+  width: 28px;
+  height: 23px;
+  border-radius: 70px;
+  border: none;
+  background: none;
+  color: #f3f3f3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.active {
+  background-color: #f3f3f3;
+  color: #3C6E71;
+}
+
+.display {
+  width: 100%;
+  padding: 32px;
+  border-radius: 9px 9px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  gap: 10px;
+  flex: 1;
+}
+
+.display > * {
+  width: 100%;
+  text-align: right;
+  overflow-wrap: break-word;
+  flex-shrink: 0;
+}
+
+.record {
+  font-size: 20px;
+  color: #717474;
+}
+
+.result {
+  font-size: 40px;
+  color: #000;
+  margin-top: -20px;
+}
+
+.btn-container {
+  background-color: #f0efef;
+  padding: 32px;
+  border: 0.5px solid #353535;
+  border-radius: 9px 9px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+} 
+
+section {
+  display: flex;
+  gap: 25px;
+}
+
+.btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 5px;
+  background-color: #fafafa;
+  font-size: 26px;
+  font-weight: 500;
+  box-shadow: -4px 5px 7px 0 rgba(0, 0, 0, 0.25), 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+
+.btn:active {
+  animation: press 0.1s linear;
+}
+
+.btn:disabled {
+  animation: none;
+}
+
+.btn-top {
+  background-color: #353535;
+  color: #F5F5F5;
+}
+
+.btn-side {
+  background-color: #3C6E71;
+  color: #F5F5F5;
+}
+
+@keyframes press {
+  0% {
+    transform: scale(1);
+  } 50% {
+    transform: scale(0.93);
+  } to {
+    transform: scale(1);
+  }
+}
