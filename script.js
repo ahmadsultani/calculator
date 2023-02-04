@@ -1,106 +1,96 @@
-var isFirst = true
-var isComplete = false
-var isCurrentlyOp = false
-var result = document.querySelector('.result');
-var record = document.querySelector('.record')
-var btnPth = document.querySelector('.btn-pth');
-var firstNum = '';
-var equation = '';
-var isFirstParenthesis = true
-var isMinus = false
+const result = document.querySelector(".result");
+var textEquation = "";
+var onOp = false;
 
-const handleOperand = (val) => {
-  if (firstNum === '') firstNum = val;
-  else if (firstNum === '0' && val === '0') return;
-  else if (val === '0' && firstNum === '-') {
-    result.innerHTML = '';
-    equation = '';
-  } else if (firstNum === '0') {
-    result.innerHTML = result.innerHTML.slice(0, -1);
+/***
+ * Custom eval function to handle errors from eval native function
+ * Fix decimal places to 3 when it's repeating
+ * @param {String} textEquation - The equation to be evaluated
+ */
+const customEval = (textEquation) => {
+  try {
+    const res = eval(textEquation);
+    return res * 1000 % 10 === 0 ? res : res.toFixed(3);
+    // if (res.toString().includes(".")) {
+    //   const decimal = res.toString().split(".")[1];
+    //   if (decimal.length > 3) {
+    //     return res.toFixed(3);
+    //   }
+    // }
+    // return res;
+  } catch (e) {
+    window.alert(
+      `Invalid equation, please try again\nError Message: ${e.message}`
+    );
+    window.location.reload();
   }
-
-  if (isComplete) {
-    result.innerHTML = ''
-    record.innerHTML = ''
-    equation = ''
-    isComplete = false;
-  }
-
-  result.innerHTML += val;
-  equation += val;
-  isCurrentlyOp = false;
-  isMinus = false;
-  if (isFirstParenthesis) btnPth.disabled = true;
 };
 
-const handleOperator = (val) => {
-  if (isFirst) record.innerHTML = '';
-  if (isMinus) return;
-  if (result.innerHTML === '' || result.innerHTML[result.innerHTML.length-1] === '(') {
-    if (val === '-') {
-      isMinus = true;
-      result.innerHTML += val;
-      equation += val;
-      firstNum = '-';
-    }
-    return;
-  }
-  if (isCurrentlyOp) {
-    console.log(result.innerHTML)
-    result.innerHTML = result.innerHTML.slice(0, -2);
-    equation = equation.slice(0, -1);
-  }
-  result.innerHTML += ' ' + val + ' ';
-  equation += val === '×' ? '*' : val;
-  isFirst = false;
-  isComplete = false;
-  firstNum = ''
-  isCurrentlyOp = true;
-  if (isFirstParenthesis) btnPth.disabled = false;
-}
+const handleBtnClick = (el) => {
+  const btnValue = el.innerHTML.trim();
+  switch (btnValue) {
+    case "AC":
+      textEquation = "0";
+      result.innerHTML = textEquation;
+      onOp = false;
+      break;
+    case "←":
+      /***
+       * We don't want to make the result on HTML empty
+       */
+      if (textEquation.length <= 1) {
+        textEquation = "0";
+        result.innerHTML = textEquation;
+      } else {
+        if (onOp) onOp = false;
+        textEquation = textEquation.slice(0, -1);
+        result.innerHTML = result.innerHTML.slice(0, -1);
 
-const handleEqual = () => {
-  if (isCurrentlyOp) {
-    alert('Please complete the equation');
-    return;
+        /**
+         * Check if the last character is an operator
+         * If it is, set onOp to true
+         */
+        if (
+          textEquation[textEquation.length - 1] === "+" ||
+          textEquation[textEquation.length - 1] === "-" ||
+          textEquation[textEquation.length - 1] === "*" ||
+          textEquation[textEquation.length - 1] === "/"
+        ) {
+          onOp = true;
+        }
+      }
+      break;
+    case "=":
+      result.innerHTML = customEval(textEquation);
+      textEquation = result.innerHTML;
+      break;
+    default:
+      /**
+       * To handle display so it wouldnt be like "09+1"
+       */
+      if (result.innerHTML === "0" && el.id === "btn-num") {
+        result.innerHTML = "";
+        textEquation = "";
+      }
+
+      /**
+       * handle different operators clicked in a row 
+       */
+      if (el.id === "btn-op" && onOp === true) {
+        textEquation = textEquation.slice(0, -1);
+        result.innerHTML = result.innerHTML.slice(0, -1);
+      } 
+      
+      if (el.id === "btn-op") onOp = true;
+      else onOp = false;
+
+      /**
+       * Special case for multiplication and decimal point
+       */
+      if (btnValue === "×") textEquation += "*";
+      else if (btnValue === ",") textEquation += ".";
+      else textEquation += btnValue;
+
+      result.innerHTML += btnValue;
   }
-  if (isFirst) return
-  record.innerHTML = result.innerHTML;
-  result.innerHTML = solve();
-  equation = result.innerHTML;
-  isComplete = true;
-  isFirst = true;
-}
-
-const solve = () => {
-  try {
-    res = eval(equation)
-    res = Math.abs(res) * 1000 % 10 > 0 ? res.toFixed(3): res;
-  } catch (e) {
-    res = 'Error';
-  }
-  return res;
-}
-
-const handleAC = () => {
-  result.innerHTML = '';
-  record.innerHTML = '';
-  equation = '';
-  isFirst = true;
-  isFirstParenthesis = true;
-}
-
-const handlePlusMinus = () => {
-  result.innerHTML = -Number(result.innerHTML);
-}
-
-const handleParenthesis = () => {
-  if (isFirstParenthesis) {
-    result.innerHTML += '(';
-    equation += '(';
-  }  else {
-    result.innerHTML += ')';
-    equation += ')';
-  }
-  isFirstParenthesis = !isFirstParenthesis;
-}
+};
