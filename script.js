@@ -10,7 +10,8 @@ var onOp = false;
 const customEval = (textEquation) => {
   try {
     const res = eval(textEquation);
-    return res * 1000 % 10 === 0 ? res : res.toFixed(3);
+    return (res * 1000) % 10 === 0 ? res : res.toFixed(3);
+    // Equivalent to the above line
     // if (res.toString().includes(".")) {
     //   const decimal = res.toString().split(".")[1];
     //   if (decimal.length > 3) {
@@ -43,6 +44,7 @@ const handleBtnClick = (el) => {
         result.innerHTML = textEquation;
       } else {
         if (onOp) onOp = false;
+
         textEquation = textEquation.slice(0, -1);
         result.innerHTML = result.innerHTML.slice(0, -1);
 
@@ -74,13 +76,13 @@ const handleBtnClick = (el) => {
       }
 
       /**
-       * handle different operators clicked in a row 
+       * handle different operators clicked in a row
        */
       if (el.id === "btn-op" && onOp === true) {
         textEquation = textEquation.slice(0, -1);
         result.innerHTML = result.innerHTML.slice(0, -1);
-      } 
-      
+      }
+
       if (el.id === "btn-op") onOp = true;
       else onOp = false;
 
