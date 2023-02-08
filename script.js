@@ -1,6 +1,7 @@
 const result = document.querySelector(".result");
 var textEquation = "";
 var onOp = false;
+var onDecimal = false;
 
 /***
  * Custom eval function to handle errors from eval native function
@@ -10,7 +11,7 @@ var onOp = false;
 const customEval = (textEquation) => {
   try {
     const res = eval(textEquation);
-    return (res * 1000) % 10 === 0 ? res : res.toFixed(3);
+    return res;
     // Equivalent to the above line
     // if (res.toString().includes(".")) {
     //   const decimal = res.toString().split(".")[1];
@@ -28,6 +29,7 @@ const customEval = (textEquation) => {
 };
 
 const handleBtnClick = (el) => {
+  console.log(el);
   const btnValue = el.innerHTML.trim();
   switch (btnValue) {
     case "AC":
@@ -66,6 +68,24 @@ const handleBtnClick = (el) => {
       result.innerHTML = customEval(textEquation);
       textEquation = result.innerHTML;
       break;
+    case ",":
+      if (onDecimal) {
+        if (onOp) onDecimal = false;
+        return;
+      }
+      if (
+        textEquation[textEquation.length - 1] === "+" ||
+        textEquation[textEquation.length - 1] === "-" ||
+        textEquation[textEquation.length - 1] === "*" ||
+        textEquation[textEquation.length - 1] === "/"
+      ) {
+        onDecimal = false;
+        return
+      }
+      onDecimal = true;
+      textEquation += ".";
+      result.innerHTML += btnValue;
+      break;
     default:
       /**
        * To handle display so it wouldnt be like "09+1"
@@ -78,9 +98,13 @@ const handleBtnClick = (el) => {
       /**
        * handle different operators clicked in a row
        */
-      if (el.id === "btn-op" && onOp === true) {
+      if (el.id === "btn-op" && onOp === true ) {
         textEquation = textEquation.slice(0, -1);
         result.innerHTML = result.innerHTML.slice(0, -1);
+      }
+
+      if (el.id === 'btn-op' && textEquation[textEquation.length - 1] === ".") {
+        return
       }
 
       if (el.id === "btn-op") onOp = true;
@@ -90,7 +114,6 @@ const handleBtnClick = (el) => {
        * Special case for multiplication and decimal point
        */
       if (btnValue === "×") textEquation += "*";
-      else if (btnValue === ",") textEquation += ".";
       else textEquation += btnValue;
 
       result.innerHTML += btnValue;
